@@ -20,8 +20,21 @@ class App extends Component {
     return (
       <Layout>
         <div className="logo" />
-        <Sider  trigger={null} collapsible collapsed={this.state.collapsed}>
-          <div className="logo" />
+        <Sider trigger={null} collapsible collapsed={this.state.collapsed}>
+          <div className="logo">
+            <h1
+              style={{
+                paddingTop: 10,
+                paddingBottom: 10,
+                textAlign: "center",
+                fontWeight: "bolder",
+                fontSize: 24,
+                color: "white"
+              }}
+            >
+              {this.state.collapsed ? "A" : "Appolo"}
+            </h1>
+          </div>
           <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
             <Menu.Item key="1">
               <Icon type="home" />
@@ -55,7 +68,7 @@ class App extends Component {
               minHeight: "100vh"
             }}
           >
-              {this.props.children}
+            {this.props.children}
           </Content>
         </Layout>
       </Layout>
