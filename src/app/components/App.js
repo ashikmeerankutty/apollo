@@ -31,7 +31,7 @@ class App extends Component {
             <Menu.Item key="2">
               <Icon type="area-chart" />
               <span>Maps</span>
-              <Link to="/about"></Link>
+              <Link to="/maps"></Link>
             </Menu.Item>
             <Menu.Item key="3">
               <Icon type="user" />
