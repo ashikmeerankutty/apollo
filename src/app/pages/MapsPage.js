@@ -1,7 +1,9 @@
 import React, { Component } from "react";
-import { Button, Icon } from "antd";
+import { Button, Icon, Row, Col, Tag } from "antd";
 import ReactMapGL, { GeolocateControl, Marker, Popup } from "react-map-gl";
 import axios from "axios";
+const { CheckableTag } = Tag;
+
 
 class MapsPage extends Component {
   constructor(props) {
@@ -17,7 +19,8 @@ class MapsPage extends Component {
       mapStyle: "mapbox://styles/mapbox/streets-v11",
       tags: [],
       users: [],
-      selectedPerson: null
+      selectedPerson: null,
+      userTags: []
     };
   }
 
@@ -44,20 +47,60 @@ class MapsPage extends Component {
 
   _onStyleChange = mapStyle => this.setState({ mapStyle });
 
+  handleUserTagsChange = async (tag, checked) => {
+    const { userTags } = this.state;
+    const nextSelectedTags = checked
+      ? [...userTags, tag]
+      : userTags.filter(t => t !== tag);
+    this.setState({ userTags: nextSelectedTags });
+    try {
+      await this.fetchRoutes(nextSelectedTags);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  fetchRoutes = async (tags) => {
+    const data = {
+        tags
+    }
+    console.log(data)
+    try {
+      let res = await axios.post(`${process.env.REACT_APP_API_URL}/generate`,data);
+      console.log(res);
+    }
+    catch(e){
+      console.log(e)
+    }
+  };
+
   render() {
     const { viewport, mapStyle, users, tags } = this.state;
 
     return (
       <div>
-        <div>
+        <div
+          style={{
+            background: "#fff",
+            display: "flex",
+            justifyContent: "center",
+            paddingBottom: 20
+          }}
+        >
           {tags.map(tag => (
-            <Button key={tag}>{tag}</Button>
+            <CheckableTag
+              key={tag}
+              checked={this.state.userTags.indexOf(tag) > -1}
+              onChange={checked => this.handleUserTagsChange(tag, checked)}
+            >
+              {tag}
+            </CheckableTag>
           ))}
         </div>
         <ReactMapGL
           {...viewport}
           width="100%"
-          height="500px"
+          height="90vh"
           mapStyle={mapStyle}
           onViewportChange={viewport => {
             this.setState({ viewport });
@@ -74,18 +117,22 @@ class MapsPage extends Component {
             offsetLeft={-20}
             offsetTop={-10}
           >
-            <Button onClick={(e)=>{
-              e.preventDefault()
-              this.setState({
-                selectedPerson : null
-              })
-            }}>
+            <button
+              className="marker-btn"
+              onClick={e => {
+                e.preventDefault();
+                console.log("...");
+                this.setState({
+                  selectedPerson: null
+                });
+              }}
+            >
               <Icon
                 type="environment"
                 theme="filled"
                 style={{ fontSize: "24px", color: "purple" }}
               />
-            </Button>
+            </button>
           </Marker>
           {/* {selectedPerson ? (Popup)} */}
         </ReactMapGL>
