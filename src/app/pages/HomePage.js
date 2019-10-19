@@ -1,32 +1,40 @@
 import React, { Component } from "react";
-import {
-  Row,
-  Col,
-  Modal,
-  Empty,
-  Button,
-  Card,
-  Tag,
-  Input,
-} from "antd";
+import { Row, Col, Modal, Empty, Button, Card, Tag, Input } from "antd";
 import axios from "axios";
 import styled from "styled-components";
 const { CheckableTag } = Tag;
 
 const StyledHome = styled.div`
+  margin: 24px 16px;
   .tags__cont {
-    padding-top: 20px;
+    padding: 24px;
+    background: #fff;
+  }
+  .tags_main {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  }
+  .users_main {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   }
   .tags__holder {
-    padding-top: 50px;
-    padding-bottom: 50px;
+    background: #fff;
+    padding: 40px 24px;
+    margin-bottom: 10px;
   }
   .users__cont {
-    padding-top: 20px;
+    padding: 24px;
+    background: #fff;
   }
   .users__holder {
-    padding-top: 50px;
-    padding-bottom: 50px;
+    padding: 40px 24px;
+    background: #fff;
+  }
+  .user__card {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+  }
+  .user__card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
   }
 `;
 
@@ -162,7 +170,10 @@ class HomePage extends Component {
         tag: tag.tag
       };
       console.log(data);
-      let res = await axios.delete(`${process.env.REACT_APP_API_URL}/tag`, data);
+      let res = await axios.delete(
+        `${process.env.REACT_APP_API_URL}/tag`,
+        data
+      );
       if (res.status === 200) {
         await this.getTags();
       }
@@ -199,7 +210,10 @@ class HomePage extends Component {
         id: id
       };
       console.log(data);
-      let res = await axios.delete(`${process.env.REACT_APP_API_URL}/user`, data);
+      let res = await axios.delete(
+        `${process.env.REACT_APP_API_URL}/user`,
+        data
+      );
       if (res.status === 200) {
         await this.getUsers();
       }
@@ -211,74 +225,78 @@ class HomePage extends Component {
   render() {
     return (
       <StyledHome>
-        <Row className="tags__cont">
-          <Col span={8}>
-            <h3>Tags</h3>
-          </Col>
-          <Col span={8} offset={8}>
-            <Button type="primary" onClick={this.showTagsModal}>
-              Add Tags
-            </Button>
-          </Col>
-        </Row>
-        <div className="tags__holder">
-          {this.state.tags.length === 0 ? (
-            <Empty />
-          ) : (
-            this.state.tags.map(tag => (
-              <Tag key={tag} closable onClose={() => this.deleteTag({ tag })}>
-                {tag}
-              </Tag>
-            ))
-          )}
+        <div className="tags_main">
+          <Row className="tags__cont">
+            <Col span={8}>
+              <h3>Tags</h3>
+            </Col>
+            <Col span={2} offset={12}>
+              <Button type="primary" onClick={this.showTagsModal}>
+                Add Tags
+              </Button>
+            </Col>
+          </Row>
+          <div className="tags__holder">
+            {this.state.tags.length === 0 ? (
+              <Empty />
+            ) : (
+              this.state.tags.map(tag => (
+                <Tag key={tag} closable onClose={() => this.deleteTag({ tag })}>
+                  {tag}
+                </Tag>
+              ))
+            )}
+          </div>
         </div>
-        <Row className="users__cont">
-          <Col span={8}>
-            <h3>Users</h3>
-          </Col>
-          <Col span={8} offset={8}>
-            <Button type="primary" onClick={this.showUsersModal}>
-              Add Users
-            </Button>
-          </Col>
-        </Row>
-        <Row className="users__holder">
-          {this.state.users.length === 0 ? (
-            <Empty />
-          ) : (
-            this.state.users.map(user => (
-              <Col key={user.id} span={6} title="Tag">
-                <Card title={user.name}>
-                  <Row>
-                    <Col>
-                      <h4>Address</h4>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col>
-                      <p>{user.address}</p>
-                    </Col>
-                  </Row>
-                  <h4>Tags</h4>
-                  <div>
-                    {user.tags.map(tag => (
-                      <Tag key={tag}>{tag}</Tag>
-                    ))}
-                  </div>
-                  <Button
-                    style={{ marginTop: 20 }}
-                    type="danger"
-                    onClick={() => {
-                      this.deleteUser(user.id);
-                    }}
-                  >
-                    Delete
-                  </Button>
-                </Card>
-              </Col>
-            ))
-          )}
-        </Row>
+        <div className="users_main">
+          <Row className="users__cont">
+            <Col span={8}>
+              <h3>Users</h3>
+            </Col>
+            <Col span={2} offset={12}>
+              <Button type="primary" onClick={this.showUsersModal}>
+                Add Users
+              </Button>
+            </Col>
+          </Row>
+          <Row className="users__holder">
+            {this.state.users.length === 0 ? (
+              <Empty />
+            ) : (
+              this.state.users.map(user => (
+                <Col key={user.id} span={6} title="Tag">
+                  <Card className="user__card" title={user.name}>
+                    <Row>
+                      <Col>
+                        <h4>Address</h4>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col>
+                        <p>{user.address}</p>
+                      </Col>
+                    </Row>
+                    <h4>Tags</h4>
+                    <div>
+                      {user.tags.map(tag => (
+                        <Tag key={tag}>{tag}</Tag>
+                      ))}
+                    </div>
+                    <Button
+                      style={{ marginTop: 20 }}
+                      type="danger"
+                      onClick={() => {
+                        this.deleteUser(user.id);
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  </Card>
+                </Col>
+              ))
+            )}
+          </Row>
+        </div>
 
         <Modal
           title="Add Tags"
