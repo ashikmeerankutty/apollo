@@ -24,18 +24,18 @@ class App extends Component {
           <div className="logo" />
           <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
             <Menu.Item key="1">
-              <Icon type="user" />
+              <Icon type="home" />
               <span>Home</span>
               <Link to="/"></Link>
             </Menu.Item>
             <Menu.Item key="2">
-              <Icon type="video-camera" />
-              <span>About</span>
+              <Icon type="area-chart" />
+              <span>Maps</span>
               <Link to="/about"></Link>
             </Menu.Item>
             <Menu.Item key="3">
-              <Icon type="upload" />
-              <span>nav 3</span>
+              <Icon type="user" />
+              <span>Account</span>
             </Menu.Item>
           </Menu>
         </Sider>
