@@ -28,10 +28,12 @@ const StyledHome = styled.div`
   .users__holder {
     padding: 40px 24px;
     background: #fff;
+    margin: 0 !important;
   }
   .user__card {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     transition: 0.3s;
+    min-height: 350px;
   }
   .user__card:hover {
     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
@@ -90,7 +92,7 @@ class HomePage extends Component {
       };
       console.log(data);
       let res = await axios.post(`${process.env.REACT_APP_API_URL}/tag`, data);
-      if (res.status === 200) {
+      if (res.status === 200 || res.status === 204) {
         this.setState({
           confirmLoading: false,
           isTagsModalVisible: false
@@ -117,7 +119,7 @@ class HomePage extends Component {
       };
       console.log(data);
       let res = await axios.post(`${process.env.REACT_APP_API_URL}/user`, data);
-      if (res.status === 200) {
+      if (res.status === 200 || res.status === 204 ) {
         this.setState({
           confirmLoading: false,
           isUsersModalVisible: false,
@@ -169,12 +171,12 @@ class HomePage extends Component {
       const data = {
         tag: tag.tag
       };
-      console.log(data);
-      let res = await axios.delete(
-        `${process.env.REACT_APP_API_URL}/tag`,
+      let res = await axios.delete(`${process.env.REACT_APP_API_URL}/tag`, {
+        headers: {},
         data
-      );
-      if (res.status === 200) {
+      });
+      console.log(res);
+      if (res.status === 200 || res.status === 204) {
         await this.getTags();
       }
     } catch (e) {
@@ -210,11 +212,11 @@ class HomePage extends Component {
         id: id
       };
       console.log(data);
-      let res = await axios.delete(
-        `${process.env.REACT_APP_API_URL}/user`,
+      let res = await axios.delete(`${process.env.REACT_APP_API_URL}/user`, {
+        headers: {},
         data
-      );
-      if (res.status === 200) {
+      });
+      if (res.status === 200 || res.status === 204) {
         await this.getUsers();
       }
     } catch (e) {
@@ -259,12 +261,12 @@ class HomePage extends Component {
               </Button>
             </Col>
           </Row>
-          <Row className="users__holder">
+          <Row gutter={16} className="users__holder">
             {this.state.users.length === 0 ? (
               <Empty />
             ) : (
               this.state.users.map(user => (
-                <Col key={user.id} span={6} title="Tag">
+                <Col style={{marginBottom:"10px"}} key={user.id} span={8} title="Tag">
                   <Card className="user__card" title={user.name}>
                     <Row>
                       <Col>
@@ -312,41 +314,8 @@ class HomePage extends Component {
           ></Input>
         </Modal>
 
-        <Modal
-          title="Add Users"
-          onOk={this.handleUsersOk}
-          onCancel={this.handleUsersCancel}
-          visible={this.state.isUsersModalVisible}
-          confirmLoading={this.state.confirmLoading}
-        >
-          <Input
-            style={{ marginBottom: 10 }}
-            type="text"
-            placeholder="User Name"
-            onChange={this.handleUserNameChange}
-          />
-          <Input
-            style={{ marginBottom: 10 }}
-            type="text"
-            placeholder="User ID"
-            onChange={this.handleUserIDChange}
-          />
-          <Input
-            style={{ marginBottom: 10 }}
-            type="text"
-            placeholder="Address"
-            onChange={this.handleUserAddressChange}
-          />
-          {this.state.tags.map(tag => (
-            <CheckableTag
-              key={tag}
-              checked={this.state.userTags.indexOf(tag) > -1}
-              onChange={checked => this.handleUserTagsChange(tag, checked)}
-            >
-              {tag}
-            </CheckableTag>
-          ))}
-        </Modal>
+        
+        
       </StyledHome>
     );
   }
