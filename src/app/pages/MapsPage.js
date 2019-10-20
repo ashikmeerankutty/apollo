@@ -35,11 +35,11 @@ class MapsPage extends Component {
         longitude: 77.580643,
         zoom: 15.5,
         bearing: 0,
-        pitch: 0,
+        pitch: 0
       },
       roads: [],
       longitude: 77.6727,
-      latitude:  12.8458,
+      latitude: 12.8458,
       address: "PESU, Electronic City Campus",
       mapStyle: "mapbox://styles/mapbox/streets-v11",
       tags: [],
@@ -107,7 +107,6 @@ class MapsPage extends Component {
     try {
       await this.getTags();
       await this.getUsers();
-      await this.fetchRoads();
     } catch (e) {
       console.log(e);
     }
@@ -135,84 +134,36 @@ class MapsPage extends Component {
     this.setState({ userTags: nextSelectedTags });
   };
 
-  fetchRoutes = async tags => {
-    const data = {
-      tags
-    };
-    try {
-      let res = await axios.post(
-        `${process.env.REACT_APP_API_URL}/generate`,
-        data
-      );
-      console.log(res.data.routes)
-      // this.setState({routes:})
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
   fetchRoads = () => {
-    const arr = [];
-    data.routes.map(async route => {
-      let res = await axios.get(
-        `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${route.geocode.latitude}&lon=${route.geocode.longitude}&highway=roads&zoom=16`
-      );
-      const data = {
-        id: route.route,
-        data: res.data
-      };
-      arr.push(data);
+    let usersData = [];
+    this.state.routes.map(async route => {
+      route.ids.map(id => {
+        this.state.users.map(async user => {
+          if (user.id === id) {
+            let res = await axios.get(
+              `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${user.latitude}&lon=${user.longitude}&highway=roads&zoom=16`
+            );
+            const data = {
+              id: route.route,
+              data: res.data,
+              user: user
+            };
+            usersData.push(data);
+          }
+        });
+      });
     });
-    this.setState({ roads: arr });
+    this.setState({ roads: usersData });
   };
 
-  // async componentDidUpdate() {
-  //   if (this.state.routes.length === 0) {
-  //     await this.fetchRoads();
-  //   }
-  // }
-
-  // generateMarkers = () => {
-  //   data.routes.map(async route => {
-  //     try {
-  //       // let res = await axios.get(
-  //       //   // `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${route.geocode.latitude}&lon=${route.geocode.longitude}&highway=roads`
-  //       // );
-  //       // console.log(res)
-  //       return (
-  //         <Marker
-  //           key={route.geocode.latitude + "route.route"}
-  //           latitude={route.geocode.latitude}
-  //           longitude={route.geocode.longitude}
-  //           offsetLeft={-20}
-  //           offsetTop={-10}
-  //         >
-  //           <button
-  //             className="marker-btn"
-  //             onClick={e => {
-  //               e.preventDefault();
-  //               console.log("...");
-  //               this.setState({
-  //                 selectedPerson: null
-  //               });
-  //             }}
-  //           >
-  //             <Icon
-  //               type="environment"
-  //               theme="filled"
-  //               style={{
-  //                 fontSize: "24px",
-  //                 color: this.state.colors[route.route]
-  //               }}
-  //             />
-  //           </button>
-  //         </Marker>
-  //       );
-  //     } catch (e) {
-  //       console.log(e);
-  //     }
-  //   });
+  // let res = await axios.get(
+  //   `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${route.geocode.latitude}&lon=${route.geocode.longitude}&highway=roads&zoom=16`
+  // );
+  // const data = {
+  //   id: route.route,
+  //   data: res.data
   // };
+  // arr.push(data);
 
   showModal = () => {
     this.setState({
@@ -242,10 +193,11 @@ class MapsPage extends Component {
       );
       if (res.status === 200 || res.status === 204) {
         this.setState({
+          routes: res.data.routes,
           confirmLoading: false,
-          isModalVisible: false,
-          userTags: []
+          isModalVisible: false
         });
+        await this.fetchRoads(res.data.routes);
       }
     } catch (e) {
       this.setState({
@@ -304,8 +256,8 @@ class MapsPage extends Component {
             positionOptions={{ enableHighAccuracy: true }}
             trackUserLocation={true}
           />
-          {this.state.roads.length > 0 &&  
-            this.state.roads.map((road,index) => (
+          {this.state.roads.length > 0 &&
+            this.state.roads.map((road, index) => (
               <Marker
                 key={index}
                 latitude={parseFloat(road.data.lat)}
@@ -328,7 +280,7 @@ class MapsPage extends Component {
                     theme="filled"
                     style={{
                       fontSize: "24px",
-                      color: this.state.colors[road.id+4]
+                      color: this.state.colors[road.id + 4]
                     }}
                   />
                 </button>
