@@ -53,6 +53,8 @@ class HomePage extends Component {
       userName: "",
       userId: "",
       address: "",
+      latitude: "",
+      longitude: "",
       userTags: []
     };
   }
@@ -115,7 +117,9 @@ class HomePage extends Component {
         name: this.state.userName,
         id: this.state.userId,
         tags: this.state.userTags,
-        address: this.state.address
+        address: this.state.address,
+        latitude: this.state.latitude,
+        longitude: this.state.longitude
       };
       console.log(data);
       let res = await axios.post(`${process.env.REACT_APP_API_URL}/user`, data);
@@ -196,6 +200,14 @@ class HomePage extends Component {
 
   handleUserIDChange = e => {
     this.setState({ userId: e.target.value });
+  };
+
+  handleUserLatitudeChange = e => {
+    this.setState({ latitude: e.target.value });
+  };
+
+  handleUserLongitudeChange = e => {
+    this.setState({ longitude: e.target.value });
   };
 
   handleUserTagsChange = (tag, checked) => {
@@ -314,8 +326,53 @@ class HomePage extends Component {
           ></Input>
         </Modal>
 
-        
-        
+        <Modal
+          title="Add Users"
+          onOk={this.handleUsersOk}
+          onCancel={this.handleUsersCancel}
+          visible={this.state.isUsersModalVisible}
+          confirmLoading={this.state.confirmLoading}
+        >
+          <Input
+            style={{ marginBottom: 10 }}
+            type="text"
+            placeholder="User Name"
+            onChange={this.handleUserNameChange}
+          />
+          <Input
+            style={{ marginBottom: 10 }}
+            type="text"
+            placeholder="User ID"
+            onChange={this.handleUserIDChange}
+          />
+          <Input
+            style={{ marginBottom: 10 }}
+            type="text"
+            placeholder="Latitude"
+            onChange={this.handleUserLatitudeChange}
+          />
+          <Input
+            style={{ marginBottom: 10 }}
+            type="text"
+            placeholder="Longitude"
+            onChange={this.handleUserLongitudeChange}
+          />
+          <Input
+            style={{ marginBottom: 10 }}
+            type="text"
+            placeholder="Address"
+            onChange={this.handleUserAddressChange}
+          />
+          {this.state.tags.map(tag => (
+            <CheckableTag
+              key={tag}
+              checked={this.state.userTags.indexOf(tag) > -1}
+              onChange={checked => this.handleUserTagsChange(tag, checked)}
+            >
+              {tag}
+            </CheckableTag>
+          ))}
+        </Modal>
       </StyledHome>
     );
   }
