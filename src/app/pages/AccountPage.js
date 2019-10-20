@@ -42,9 +42,7 @@ class AccountPage extends Component {
       destination_longitude: this.state.user.longitude,
       destination_latitude: this.state.user.latitude
     };
-    let res = await axios.get(`${process.env.REACT_APP_API_URL}/eta`, {
-      params: data
-    });
+    let res = await axios.post(`${process.env.REACT_APP_API_URL}/eta`,data);
     console.log(res);
     this.setState({ eta: res.data.eta });
   };
