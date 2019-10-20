@@ -42,11 +42,11 @@ class AccountPage extends Component {
       destination_longitude: this.state.user.longitude,
       destination_latitude: this.state.user.latitude
     };
-    let res = await axios.post(`${process.env.REACT_APP_API_URL}/eta`,data);
+    let res = await axios.post(`${process.env.REACT_APP_API_URL}/eta`, data);
     console.log(res);
     this.setState({ eta: res.data.eta });
   };
-å
+
 
   render() {
     const { user, eta, college } = this.state;
@@ -55,26 +55,27 @@ class AccountPage extends Component {
         {user && (
           <div>
             <Row>
-              <Col offset="1" span="23">
+              <Col offset={1} span={23}>
                 <h2>Account</h2>
               </Col>
             </Row>
             <Row>
-              <Col span="7" offset="1">
+              <Col span={7} offset={1}>
                 <h3>{user.name}</h3>
                 <p>{user.address}</p>
               </Col>
-              <Col span="4" offset="10">
+              <Col span={4} offset={10}>
                 <Avatar size={150} icon="user" />
               </Col>
             </Row>
             <Row>
               <Row>
-                <Col offset="1" span="12">
+                <Col offset={1} span={12}>
                   <h3>Status</h3>
                   <p>
                     ETA from <strong>{college.address}</strong> to{" "}
-                    <strong>{user.address}</strong> is <strong> {(eta/60).toFixed(2)} minutes </strong>
+                    <strong>{user.address}</strong> is{" "}
+                    <strong> {(eta / 60).toFixed(2)} minutes </strong>
                   </p>
                 </Col>
               </Row>
