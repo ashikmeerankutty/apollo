@@ -49,6 +49,7 @@ class App extends Component {
             <Menu.Item key="3">
               <Icon type="user" />
               <span>Account</span>
+              <Link to="/account"></Link>
             </Menu.Item>
           </Menu>
         </Sider>
