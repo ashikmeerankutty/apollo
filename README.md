@@ -16,6 +16,11 @@ Install packages
 
 ```yarn```
 
+Add environment Variables
+
+``` cp .env.sample .env```
+- Add your own API keys
+
 Start the development server
 
 ```yarn start```
