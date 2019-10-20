@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Layout, Menu, Icon } from "antd";
 import { Link } from "react-router-dom";
+import { bold } from "ansi-colors";
 
 const { Header, Sider, Content } = Layout;
 
@@ -54,7 +55,7 @@ class App extends Component {
           </Menu>
         </Sider>
         <Layout>
-          <Header style={{ background: "#fff", paddingLeft: 20 }}>
+          <Header style={{ background: "#fff", fontWeight:bold, paddingLeft: 20 }}>
             <Icon
               className="trigger"
               type={this.state.collapsed ? "menu-unfold" : "menu-fold"}
