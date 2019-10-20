@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import AlgoliaPlaces from "algolia-places-react";
 import { Row, Col, Modal, Empty, Button, Card, Tag, Input } from "antd";
 import axios from "axios";
 import styled from "styled-components";
@@ -99,6 +100,7 @@ class HomePage extends Component {
           confirmLoading: false,
           isTagsModalVisible: false
         });
+        await this.getTags();
       }
     } catch (e) {
       this.setState({
@@ -123,7 +125,7 @@ class HomePage extends Component {
       };
       console.log(data);
       let res = await axios.post(`${process.env.REACT_APP_API_URL}/user`, data);
-      if (res.status === 200 || res.status === 204 ) {
+      if (res.status === 200 || res.status === 204) {
         this.setState({
           confirmLoading: false,
           isUsersModalVisible: false,
@@ -131,6 +133,7 @@ class HomePage extends Component {
           userId: "",
           userTags: []
         });
+        await this.getUsers();
       }
     } catch (e) {
       this.setState({
@@ -255,7 +258,12 @@ class HomePage extends Component {
               <Empty />
             ) : (
               this.state.tags.map(tag => (
-                <Tag key={tag} closable onClose={() => this.deleteTag({ tag })}>
+                <Tag
+                  key={tag}
+                  style={{ border: "1px solid" }}
+                  closable
+                  onClose={() => this.deleteTag({ tag })}
+                >
                   {tag}
                 </Tag>
               ))
@@ -278,7 +286,12 @@ class HomePage extends Component {
               <Empty />
             ) : (
               this.state.users.map(user => (
-                <Col style={{marginBottom:"10px"}} key={user.id} span={8} title="Tag">
+                <Col
+                  style={{ marginBottom: "10px" }}
+                  key={user.id}
+                  span={8}
+                  title="Tag"
+                >
                   <Card className="user__card" title={user.name}>
                     <Row>
                       <Col>
@@ -345,27 +358,38 @@ class HomePage extends Component {
             placeholder="User ID"
             onChange={this.handleUserIDChange}
           />
-          <Input
-            style={{ marginBottom: 10 }}
-            type="text"
-            placeholder="Latitude"
-            onChange={this.handleUserLatitudeChange}
-          />
-          <Input
-            style={{ marginBottom: 10 }}
-            type="text"
-            placeholder="Longitude"
-            onChange={this.handleUserLongitudeChange}
-          />
-          <Input
-            style={{ marginBottom: 10 }}
-            type="text"
+          <AlgoliaPlaces
             placeholder="Address"
-            onChange={this.handleUserAddressChange}
+            options={{
+              appId: process.env.REACT_APP_APP_ID,
+              apiKey: process.env.REACT_APP_ALGOLIA_API,
+              language: "sv"
+            }}
+            onChange={({ query, rawAnswer, suggestion, suggestionIndex }) =>
+              this.setState({
+                address: suggestion.value,
+                latitude: suggestion.latlng.lat,
+                longitude: suggestion.latlng.lng
+              })
+            }
+            onCursorChanged={({
+              rawAnswer,
+              query,
+              suggestion,
+              suggestonIndex
+            }) =>
+              console.log(
+                "Fired when arrows keys are used to navigate suggestions."
+              )
+            }
+            onLimit={({ message }) =>
+              console.log("Fired when you reached your current rate limit.")
+            }
           />
           {this.state.tags.map(tag => (
             <CheckableTag
               key={tag}
+              style = {{margin:10,border : "1px solid"}}
               checked={this.state.userTags.indexOf(tag) > -1}
               onChange={checked => this.handleUserTagsChange(tag, checked)}
             >
