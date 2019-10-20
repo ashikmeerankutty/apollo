@@ -4,27 +4,6 @@ import ReactMapGL, { GeolocateControl, Marker } from "react-map-gl";
 import axios from "axios";
 const { CheckableTag } = Tag;
 
-const data = {
-  routes: [
-    { route: 1, geocode: { longitude: 77.700572, latitude: 12.861486 } },
-    { route: 1, geocode: { longitude: 77.717875, latitude: 12.898849 } },
-    { route: 2, geocode: { longitude: 77.610995, latitude: 12.97 } },
-    { route: 2, geocode: { longitude: 77.6774, latitude: 12.892025 } },
-    { route: 2, geocode: { longitude: 77.683376, latitude: 12.883959 } },
-    { route: 2, geocode: { longitude: 77.623708, latitude: 12.938937 } },
-    { route: 3, geocode: { longitude: 77.660475, latitude: 12.852426 } },
-    { route: 3, geocode: { longitude: 77.581853, latitude: 12.890971 } },
-    { route: 3, geocode: { longitude: 77.56029, latitude: 12.97021 } },
-    { route: 3, geocode: { longitude: 77.56029, latitude: 12.97021 } },
-    { route: 3, geocode: { longitude: 77.593123, latitude: 12.919038 } },
-    { route: 4, geocode: { longitude: 77.659441, latitude: 12.840956 } },
-    { route: 4, geocode: { longitude: 77.619258, latitude: 12.780224 } },
-    { route: 5, geocode: { longitude: 77.713096, latitude: 12.796388 } },
-    { route: 5, geocode: { longitude: 77.771219, latitude: 12.782565 } },
-    { route: 6, geocode: { longitude: 77.700572, latitude: 12.861486 } },
-    { route: 6, geocode: { longitude: 77.717875, latitude: 12.898849 } }
-  ]
-};
 
 class MapsPage extends Component {
   constructor(props) {
@@ -155,15 +134,6 @@ class MapsPage extends Component {
     });
     this.setState({ roads: usersData });
   };
-
-  // let res = await axios.get(
-  //   `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${route.geocode.latitude}&lon=${route.geocode.longitude}&highway=roads&zoom=16`
-  // );
-  // const data = {
-  //   id: route.route,
-  //   data: res.data
-  // };
-  // arr.push(data);
 
   showModal = () => {
     this.setState({
