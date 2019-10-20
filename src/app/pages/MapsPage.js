@@ -25,7 +25,6 @@ class MapsPage extends Component {
       users: [],
       selectedPerson: null,
       userTags: [],
-      routes: data.routes,
       isModalVisible: false,
       colors: [
         "#FF6633",
@@ -189,7 +188,7 @@ class MapsPage extends Component {
   };
 
   render() {
-    const { viewport, mapStyle, users, tags, routes, colors } = this.state;
+    const { viewport, mapStyle, users, tags, colors } = this.state;
 
     return (
       <div>
