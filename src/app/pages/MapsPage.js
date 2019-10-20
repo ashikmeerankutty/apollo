@@ -1,9 +1,8 @@
 import React, { Component } from "react";
 import { Button, Icon, Row, Col, Tag, Input, Modal } from "antd";
-import ReactMapGL, { GeolocateControl, Marker } from "react-map-gl";
+import ReactMapGL, { GeolocateControl, Marker, Popup } from "react-map-gl";
 import axios from "axios";
 const { CheckableTag } = Tag;
-
 
 class MapsPage extends Component {
   constructor(props) {
@@ -23,7 +22,7 @@ class MapsPage extends Component {
       mapStyle: "mapbox://styles/mapbox/streets-v11",
       tags: [],
       users: [],
-      selectedPerson: null,
+      selectedRoad: null,
       userTags: [],
       isModalVisible: false,
       colors: [
@@ -206,7 +205,7 @@ class MapsPage extends Component {
             ))}
           </Col>
           <Col span={1}>
-            <Button type="primary" onClick={this.showModal}>
+            <Button type="default" onClick={this.showModal}>
               Filter
             </Button>
           </Col>
@@ -238,9 +237,9 @@ class MapsPage extends Component {
                   className="marker-btn"
                   onClick={e => {
                     e.preventDefault();
-                    console.log("...");
+                    console.log(road);
                     this.setState({
-                      selectedPerson: null
+                      selectedRoad: road
                     });
                   }}
                 >
@@ -255,6 +254,20 @@ class MapsPage extends Component {
                 </button>
               </Marker>
             ))}
+          {this.state.selectedRoad ? (
+            <Popup
+              latitude={parseFloat(this.state.selectedRoad.data.lat)}
+              longitude={parseFloat(this.state.selectedRoad.data.lon)}
+              onClose={() => {
+                this.setState({ selectedRoad: null });
+              }}
+            >
+              <div>
+                <h2>{this.state.selectedRoad.user.name}</h2>
+                <p>{this.state.selectedRoad.data.display_name}</p>
+              </div>
+            </Popup>
+          ) : null}
         </ReactMapGL>
         <Modal
           title="Filter results"
