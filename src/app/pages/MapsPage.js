@@ -1,6 +1,7 @@
 import React, { Component } from "react";
+import _ from "lodash";
 import { Button, Icon, Row, Col, Tag, Input, Modal } from "antd";
-import ReactMapGL, { GeolocateControl, Marker, Popup } from "react-map-gl";
+import MapGL, { GeolocateControl, Marker, Popup } from "react-map-gl";
 import axios from "axios";
 const { CheckableTag } = Tag;
 
@@ -9,9 +10,9 @@ class MapsPage extends Component {
     super(props);
     this.state = {
       viewport: {
-        latitude: 12.972442,
-        longitude: 77.580643,
-        zoom: 15.5,
+        latitude: 12.8458,
+        longitude: 77.6727,
+        zoom: 10.5,
         bearing: 0,
         pitch: 0
       },
@@ -25,6 +26,7 @@ class MapsPage extends Component {
       selectedRoad: null,
       userTags: [],
       isModalVisible: false,
+      mapCoordinates: [],
       colors: [
         "#FF6633",
         "#FFB399",
@@ -114,22 +116,24 @@ class MapsPage extends Component {
   fetchRoads = () => {
     let usersData = [];
     this.state.routes.map(async route => {
-      route.ids.map(id => {
+      route.passengers.map(async passenger => {
         this.state.users.map(async user => {
-          if (user.id === id) {
+          if (passenger.id == user.id) {
             let res = await axios.get(
               `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${user.latitude}&lon=${user.longitude}&highway=roads&zoom=16`
             );
             const data = {
               id: route.route,
               data: res.data,
-              user: user
+              user: user,
+              passenger: passenger
             };
             usersData.push(data);
           }
         });
       });
     });
+    console.log(usersData);
     this.setState({ roads: usersData });
   };
 
@@ -186,8 +190,19 @@ class MapsPage extends Component {
     this.setState({ longitude: e.target.value });
   };
 
+  generateMapRoutes = () => {
+    const { roads } = this.state;
+    let res = roads.reduce((a, c) => {
+      if (!(c.id in a)) {
+        a[c.id] = [];
+      }
+      return { ...a, [c.id]: [...a[c.id], [c.data.lat, c.data.lon]] };
+    }, {});
+    this.setState({ mapCoordinates: res });
+  };
+
   render() {
-    const { viewport, mapStyle, users, tags, colors } = this.state;
+    const { viewport, mapStyle, tags } = this.state;
 
     return (
       <div>
@@ -204,13 +219,19 @@ class MapsPage extends Component {
               </CheckableTag>
             ))}
           </Col>
-          <Col span={1}>
+          <Col span={2}>
             <Button type="default" onClick={this.showModal}>
               Filter
             </Button>
           </Col>
+          {/* <Col span={6}>
+            <Button type="default" onClick={this.generateMapRoutes}>
+              Generate Map Routes
+            </Button>
+          </Col> */}
         </Row>
-        <ReactMapGL
+        <MapGL
+          ref={reactMap => (this.reactMap = reactMap)}
           {...viewport}
           width="100%"
           height="90vh"
@@ -244,7 +265,9 @@ class MapsPage extends Component {
                   }}
                 >
                   <Icon
-                    type="smile"
+                    type={
+                      road.passenger.proximity === "FAR" ? "frown" : "smile"
+                    }
                     theme="filled"
                     style={{
                       fontSize: "24px",
@@ -268,7 +291,7 @@ class MapsPage extends Component {
               </div>
             </Popup>
           ) : null}
-        </ReactMapGL>
+        </MapGL>
         <Modal
           title="Filter results"
           onOk={this.handleOk}
@@ -298,6 +321,7 @@ class MapsPage extends Component {
             onChange={this.handleLongitudeChange}
           />
         </Modal>
+        {this.state.mapCoordinates.length > 0 && <div>hello</div>}
       </div>
     );
   }
