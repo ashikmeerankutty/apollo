@@ -1,6 +1,7 @@
 # Apollo Frontend
 
 Frontend for Apollo Bus Route Generator
+Developed as part of InOut 6.0 Hackathon
 
 ### Backend 
 Developed by Neel Kammat
